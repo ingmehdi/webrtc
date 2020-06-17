@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>Video Chat</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <meta name="description" content="Video Chat.">
+    <meta name="author" content="Brian Mau">
+    <link href="/css/main.css" rel="stylesheet">
+</head>
+
+<body>
+    <div id="container">
+        <video id="localVideo" class="localVideo" playsinline autoplay muted></video>
+        <video id="remoteVideos" class="remoteVideos " playsinline autoplay muted></video>
+    </div>
+    <canvas id="myCanvas" width="532" height="300"></canvas>
+    <video id="recorded" playsinline loop></video>
+
+    <script>
+        // Init
+        console.log(MediaRecorder.isTypeSupported('video/webm')) // true
+        const canvas = document.querySelector("canvas")
+        const ctx = canvas.getContext("2d")
+        const video = document.getElementById("localVideo")
+        const video2 = document.getElementById("remoteVideos")
+        canvas.style.display = "none";
+        // Start the video in the player
+        // video.play()
+
+        // On play event - draw the video in the canvas
+        video.addEventListener('play', () => {
+            function step() {
+                ctx.drawImage(video, 0, 0, canvas.width, canvas.height)
+                ctx.drawImage(video2, 100, 100, 200, 200);
+
+                requestAnimationFrame(step)
+            }
+            requestAnimationFrame(step);
+
+            // Init stream and recorder
+            const stream = canvas.captureStream()
+            // const recorder = new MediaRecorder(stream, {
+            //     mimeType: 'video/webm',
+            // });
+
+            // Get the blob data when is available
+            let allChunks = [];
+            // recorder.ondataavailable = function (e) {
+            //     console.log({
+            //         e
+            //     })
+            //     allChunks.push(e.data);
+            // }
+            // recorder.onstop = (e) => {
+            //     console.log('onstop event')
+            //     console.log({
+            //         e
+            //     })
+            //     const fullBlob = new Blob(allChunks, {
+            //         'type': 'video/webm'
+            //     });
+            //     const downloadUrl = window.URL.createObjectURL(fullBlob)
+            //     console.log({
+            //         fullBlob
+            //     })
+            //     console.log({
+            //         downloadUrl
+            //     })
+            // }
+
+            // Start to record
+            // recorder.start()
+
+            // Stop the recorder after 5s and check the result
+            // setTimeout(() => {
+            //     recorder.stop()
+            //     console.log('recorder stopped')
+            // }, 5000);
+        })
+    </script>
+    <script src="/js/third_party/webgl_teapot/webgl-utils.js"></script>
+    <script src="/js/third_party/webgl_teapot/webgl-debug.js"></script>
+    <script src="/js/third_party/webgl_teapot/matrix4x4.js"></script>
+    <script src="/js/third_party/webgl_teapot/cameracontroller.js"></script>
+    <script src="/js/third_party/webgl_teapot/teapot-streams.js"></script>
+    <script src="/js/third_party/webgl_teapot/demo.js"></script>
+
+    <!-- include adapter for srcObject shim -->
+    <script src="https://webrtc.github.io/adapter/adapter-latest.js"></script>
+    <script src='/socket.io/socket.io.js'></script>
+    <script src="/js/video.js"></script>
+</body>
+
+</html>
